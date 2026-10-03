@@ -667,6 +667,29 @@
       margin: 8px 0;
     }
 
+    .easy {
+      background: var(--accent-soft);
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin: 8px 0;
+    }
+
+    .howtest {
+      font-size: 13.5px;
+      margin: 8px 0;
+    }
+
+    .howtest ul {
+      margin: 4px 0 0;
+      padding-left: 20px;
+    }
+
+    .tech summary {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .meta {
       display: flex;
       flex-wrap: wrap;
@@ -1310,14 +1333,21 @@
             <h4>Hợp đồng nền cho cả nhóm (làm đầu tiên)</h4><span class="pill">L0 · hạn T2 05/10 sáng</span><span
               class="pill sz-S">cỡ nhỏ</span>
           </header>
-          <p><code>core/clock/clock.dart</code> (<code>Clock</code>, <code>serverNow()</code> đọc
-            <code>Env.serverUtcOffset</code>, có <code>FakeClock</code>),
-            <code>ApiException(code, message, status)</code> rỗng ruột để mọi người cùng ném/bắt, model
-            <code>Vehicle{id, numberPlate, vehicleTypeId, vehicleTypeName, status, verification}</code> +
-            <code>VehicleRepository</code> (B và C <strong>chỉ đọc</strong>, không sửa model). <strong>Một PR duy nhất
-              thêm mọi thư viện mới vào <code>pubspec.yaml</code></strong> (<code>dio</code>,
-            <code>flutter_secure_storage</code>, <code>flutter_image_compress</code>, <code>webview_flutter</code>...)
-            để không ai tự sửa file này và gây conflict.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Đặt sẵn mấy món đồ chung cho cả nhóm xài: cái đồng hồ lấy giờ của máy
+            chủ, cái hộp báo lỗi, và danh sách xe. Làm trước để mọi người khỏi chờ nhau.</div>
+          <div class="howtest"><b>Test thế nào</b> Không có màn hình. Chạy <code>flutter test</code>, các test giờ và
+            model xe phải pass.</div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><code>core/clock/clock.dart</code> (<code>Clock</code>, <code>serverNow()</code> đọc
+              <code>Env.serverUtcOffset</code>, có <code>FakeClock</code>),
+              <code>ApiException(code, message, status)</code> rỗng ruột để mọi người cùng ném/bắt, model
+              <code>Vehicle{id, numberPlate, vehicleTypeId, vehicleTypeName, status, verification}</code> +
+              <code>VehicleRepository</code> (B và C <strong>chỉ đọc</strong>, không sửa model). <strong>Một PR duy nhất
+                thêm mọi thư viện mới vào <code>pubspec.yaml</code></strong> (<code>dio</code>,
+              <code>flutter_secure_storage</code>, <code>flutter_image_compress</code>, <code>webview_flutter</code>...)
+              để không ai tự sửa file này và gây conflict.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> —</div>
             <div><b>API</b> <a class="ref ep" href="#E013" title="GET /api/vehicle">E013</a></div>
@@ -1341,10 +1371,18 @@
             <h4>ApiClient + phiên đăng nhập</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><code>core/network/api_client.dart</code> (Dio), <code>core/network/api_exception.dart</code>,
-            <code>core/auth/token_storage.dart</code> (flutter_secure_storage), <code>AuthRepository</code> gọi BE thật
-            (thay <code>FakeAuthRepository</code> trong skeleton). Thêm <code>ApiClient.replayGet(path, rawQuery)</code>
-            cho việc gọi lại callback VNPay (<a class="ref" href="#R-X10">R-X10</a>).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Làm 'người đưa thư' giữa app và máy chủ: tự gắn thẻ đăng nhập vào mỗi
+            lần hỏi, hết hạn thẻ thì tự xin thẻ mới. Cả nhóm cần cái này nên phải xong sớm.</div>
+          <div class="howtest"><b>Test thế nào</b> Không có màn hình riêng. Đăng nhập bằng <code>driver1@pbm.com</code>
+            được và dùng app 15 phút không bị văng ra là đạt; có test <code>flutter test</code>.</div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><code>core/network/api_client.dart</code> (Dio), <code>core/network/api_exception.dart</code>,
+              <code>core/auth/token_storage.dart</code> (flutter_secure_storage), <code>AuthRepository</code> gọi BE
+              thật (thay <code>FakeAuthRepository</code> trong skeleton). Thêm
+              <code>ApiClient.replayGet(path, rawQuery)</code> cho việc gọi lại callback VNPay (<a class="ref"
+                href="#R-X10">R-X10</a>).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> —</div>
             <div><b>API</b> <a class="ref ep" href="#E001" title="POST /api/auth/login">E001</a> <a class="ref ep"
@@ -1386,8 +1424,31 @@
             <h4>Đăng nhập, đăng ký OTP, quên mật khẩu, Splash</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-A01">S-A01</a>..<a class="ref" href="#S-A05">S-A05</a>, giữ phiên qua lần mở app,
-            redirect guard trong <code>app/router.dart</code> (chỉ sửa phần đánh dấu TODO(Quang)).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Các màn để vào app: mở app, đăng nhập, đăng ký (nhập mã OTP gửi qua
+            email), quên mật khẩu.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-A01">S-A01</a> <strong>Splash</strong>: đăng nhập <code>driver1@pbm.com</code>
+                (Tài xế), <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý),
+                <code>admin@pbm.com</code> (Quản trị), vào <code>/splash</code></li>
+              <li><a class="ref" href="#S-A02">S-A02</a> <strong>Đăng nhập</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), <code>staff1@pbm.com</code> (Nhân viên),
+                <code>manager1@pbm.com</code> (Quản lý), <code>admin@pbm.com</code> (Quản trị), vào <code>/login</code>
+              </li>
+              <li><a class="ref" href="#S-A03">S-A03</a> <strong>Đăng ký</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/register</code></li>
+              <li><a class="ref" href="#S-A04">S-A04</a> <strong>Nhập OTP đăng ký</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/register/otp</code></li>
+              <li><a class="ref" href="#S-A05">S-A05</a> <strong>Quên mật khẩu (3 bước)</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), <code>staff1@pbm.com</code> (Nhân viên),
+                <code>manager1@pbm.com</code> (Quản lý), <code>admin@pbm.com</code> (Quản trị), vào
+                <code>/forgot-password</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-A01">S-A01</a>..<a class="ref" href="#S-A05">S-A05</a>, giữ phiên qua lần mở app,
+              redirect guard trong <code>app/router.dart</code> (chỉ sửa phần đánh dấu TODO(Quang)).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-A01">S-A01</a> <a class="ref" href="#S-A02">S-A02</a> <a class="ref"
                 href="#S-A03">S-A03</a> <a class="ref" href="#S-A04">S-A04</a> <a class="ref" href="#S-A05">S-A05</a>
@@ -1417,8 +1478,27 @@
             <h4>Tài khoản dùng chung mọi vai trò</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-A06">S-A06</a>..<a class="ref" href="#S-A08">S-A08</a>: hồ sơ (sửa với tài xế, xem
-            với vai trò khác), đổi mật khẩu, đăng xuất. <code>accountBranch(prefix)</code> đã dùng chung.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Màn 'Tài khoản' của mọi người: xem và sửa tên, đổi mật khẩu, đăng xuất.
+          </div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-A06">S-A06</a> <strong>Tài khoản</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), <code>staff1@pbm.com</code> (Nhân viên),
+                <code>manager1@pbm.com</code> (Quản lý), <code>admin@pbm.com</code> (Quản trị), vào
+                <code>/{role}/account</code></li>
+              <li><a class="ref" href="#S-A07">S-A07</a> <strong>Hồ sơ</strong>: đăng nhập <code>driver1@pbm.com</code>
+                (Tài xế), <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý),
+                <code>admin@pbm.com</code> (Quản trị), vào <code>/{role}/account/profile</code></li>
+              <li><a class="ref" href="#S-A08">S-A08</a> <strong>Đổi mật khẩu</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), <code>staff1@pbm.com</code> (Nhân viên),
+                <code>manager1@pbm.com</code> (Quản lý), <code>admin@pbm.com</code> (Quản trị), vào
+                <code>/{role}/account/password</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-A06">S-A06</a>..<a class="ref" href="#S-A08">S-A08</a>: hồ sơ (sửa với tài xế,
+              xem với vai trò khác), đổi mật khẩu, đăng xuất. <code>accountBranch(prefix)</code> đã dùng chung.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-A06">S-A06</a> <a class="ref" href="#S-A07">S-A07</a> <a class="ref"
                 href="#S-A08">S-A08</a></div>
@@ -1445,8 +1525,20 @@
             <h4>Xe của tôi: danh sách, thêm, xóa</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-A09">S-A09</a>, <a class="ref" href="#S-A10">S-A10</a>,
-            <code>VehicleRepository</code> (thay <code>AccountRepository</code>).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế xem danh sách xe của mình, thêm xe mới (nhập biển số), xóa xe.
+          </div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-A09">S-A09</a> <strong>Xe của tôi</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/account/vehicles</code></li>
+              <li><a class="ref" href="#S-A10">S-A10</a> <strong>Thêm xe</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/account/vehicles/add</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-A09">S-A09</a>, <a class="ref" href="#S-A10">S-A10</a>,
+              <code>VehicleRepository</code> (thay <code>AccountRepository</code>).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-A09">S-A09</a> <a class="ref" href="#S-A10">S-A10</a></div>
             <div><b>API</b> <a class="ref ep" href="#E013" title="GET /api/vehicle">E013</a> <a class="ref ep"
@@ -1475,8 +1567,18 @@
             <h4>Xác minh xe bằng giấy tờ (phía tài xế)</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><a class="ref" href="#S-A11">S-A11</a> + dịch vụ nén ảnh (≤ 1 MB, jpeg) bằng <code>image_picker</code> +
-            <code>flutter_image_compress</code>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế chụp 2 mặt giấy tờ xe gửi lên để quản lý duyệt. Ảnh to quá thì
+            app tự thu nhỏ.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-A11">S-A11</a> <strong>Xác minh xe</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/account/vehicles/:id/verify</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-A11">S-A11</a> + dịch vụ nén ảnh (≤ 1 MB, jpeg) bằng <code>image_picker</code> +
+              <code>flutter_image_compress</code>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-A11">S-A11</a></div>
             <div><b>API</b> <a class="ref ep" href="#E017"
@@ -1500,8 +1602,15 @@
             <h4>Bảng mã lỗi + widget dùng chung</h4><span class="pill">L0 · hạn T2 05/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><code>core/errors/error_messages.dart</code> (124 mã + 3 mã ngoài enum), <code>AsyncView</code> nâng cấp,
-            <code>EmptyView</code>, <code>MoneyText</code>. <strong>Làm đầu tiên, cả nhóm dùng.</strong></p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Cuốn từ điển: máy chủ trả mã lỗi tiếng Anh, app đổi thành câu tiếng Việt
+            dễ hiểu. Thêm hàm in tiền kiểu <code>1.234.000đ</code>.</div>
+          <div class="howtest"><b>Test thế nào</b> Không có màn hình. Chạy <code>flutter test</code>; thử cố tình nhập
+            sai mật khẩu ở màn đăng nhập phải thấy câu tiếng Việt.</div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><code>core/errors/error_messages.dart</code> (124 mã + 3 mã ngoài enum), <code>AsyncView</code> nâng cấp,
+              <code>EmptyView</code>, <code>MoneyText</code>. <strong>Làm đầu tiên, cả nhóm dùng.</strong></p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> —</div>
             <div><b>API</b> —</div>
@@ -1521,12 +1630,24 @@
             <h4>Lịch sử và chi tiết giao dịch (tài xế)</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-D03">S-D03</a>, <a class="ref" href="#S-D04">S-D04</a>, phân trang vô hạn. Gỡ luôn
-            phần hoàn tiền còn sót trong code mẫu (<strong>chỉ làm sau khi <a class="ref" href="#T-B0">T-B0</a> và <a
-                class="ref" href="#T-C0">T-C0</a> xong</strong>, vì <code>features/refund</code> và
-            <code>refund_review_screen.dart</code> còn dùng nó, xóa sớm sẽ vỡ build):
-            <code>PaymentStatus.refunded</code>, <code>lateArrival</code>, trạng thái hoàn tiền ở
-            <code>payment_repository.dart</code> và <code>payment_record.dart</code>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế xem lại các lần đã trả tiền, bấm vào xem chi tiết từng lần. Xóa
+            nốt mấy chữ 'hoàn tiền' còn sót lại vì app không có hoàn tiền.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-D03">S-D03</a> <strong>Giao dịch (tab)</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/wallet</code></li>
+              <li><a class="ref" href="#S-D04">S-D04</a> <strong>Chi tiết giao dịch</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/wallet/:id</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-D03">S-D03</a>, <a class="ref" href="#S-D04">S-D04</a>, phân trang vô hạn. Gỡ
+              luôn phần hoàn tiền còn sót trong code mẫu (<strong>chỉ làm sau khi <a class="ref" href="#T-B0">T-B0</a>
+                và <a class="ref" href="#T-C0">T-C0</a> xong</strong>, vì <code>features/refund</code> và
+              <code>refund_review_screen.dart</code> còn dùng nó, xóa sớm sẽ vỡ build):
+              <code>PaymentStatus.refunded</code>, <code>lateArrival</code>, trạng thái hoàn tiền ở
+              <code>payment_repository.dart</code> và <code>payment_record.dart</code>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-D03">S-D03</a> <a class="ref" href="#S-D04">S-D04</a></div>
             <div><b>API</b> <a class="ref ep" href="#E068" title="GET /api/transactions/my">E068</a> <a class="ref ep"
@@ -1551,17 +1672,25 @@
             <h4>Dọn skeleton: bỏ hoàn tiền, trả sau, thu tiền mặt đặt chỗ</h4><span class="pill">L1 · hạn T3 06/10
               sáng</span><span class="pill sz-S">cỡ nhỏ</span>
           </header>
-          <p>Skeleton hiện còn code của mô hình cũ (giả định BE sẽ được sửa) nên phải gỡ trước khi làm tiếp. Phần của B:
-            <code>core/config/business_rules.dart</code> (bỏ <code>holdGrace</code>, <code>payCutoff</code>,
-            <code>minHoldForPayLater</code>, <code>maxUnpaidHolds</code>, <code>payLaterMaxLead</code>,
-            <code>payNowWindow</code>), <code>features/reservation</code> (<code>cancel_refund_sheet.dart</code>,
-            <code>releaseAt</code>, <code>payNow</code>, nhánh hủy <code>CONFIRMED</code>,
-            <code>CancelResult.refundRequest</code>; thêm <code>paymentExpiredAt</code> vào <code>Reservation</code>),
-            <code>test/reservation_rules_test.dart</code>, và thư mục dùng chung <code>features/refund</code> cùng
-            <code>test/refund_flow_test.dart</code> (xóa sau khi <a class="ref" href="#T-C0">T-C0</a> đã gỡ chỗ dùng bên
-            quản lý). <a class="ref" href="#T-B1">T-B1</a>, <a class="ref" href="#T-B3">T-B3</a>, <a class="ref"
-              href="#T-B4">T-B4</a>, <a class="ref" href="#T-B7">T-B7</a> sửa cùng các file này nên làm <a class="ref"
-              href="#T-B0">T-B0</a> trước.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Dọn nhà: xóa những thứ của kiểu làm cũ (hoàn tiền, trả sau) vì máy chủ
+            không có. Chỉ giữ cách mới: tạo đặt chỗ xong phải trả tiền liền.</div>
+          <div class="howtest"><b>Test thế nào</b> Không có màn hình. Tìm chữ <code>refund</code>, <code>payNow</code>,
+            <code>releaseAt</code> trong <code>Flutter/lib</code> phải ra 0 kết quả; <code>flutter analyze</code> sạch.
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p>Skeleton hiện còn code của mô hình cũ (giả định BE sẽ được sửa) nên phải gỡ trước khi làm tiếp. Phần của
+              B: <code>core/config/business_rules.dart</code> (bỏ <code>holdGrace</code>, <code>payCutoff</code>,
+              <code>minHoldForPayLater</code>, <code>maxUnpaidHolds</code>, <code>payLaterMaxLead</code>,
+              <code>payNowWindow</code>), <code>features/reservation</code> (<code>cancel_refund_sheet.dart</code>,
+              <code>releaseAt</code>, <code>payNow</code>, nhánh hủy <code>CONFIRMED</code>,
+              <code>CancelResult.refundRequest</code>; thêm <code>paymentExpiredAt</code> vào <code>Reservation</code>),
+              <code>test/reservation_rules_test.dart</code>, và thư mục dùng chung <code>features/refund</code> cùng
+              <code>test/refund_flow_test.dart</code> (xóa sau khi <a class="ref" href="#T-C0">T-C0</a> đã gỡ chỗ dùng
+              bên quản lý). <a class="ref" href="#T-B1">T-B1</a>, <a class="ref" href="#T-B3">T-B3</a>, <a class="ref"
+                href="#T-B4">T-B4</a>, <a class="ref" href="#T-B7">T-B7</a> sửa cùng các file này nên làm <a class="ref"
+                href="#T-B0">T-B0</a> trước.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> —</div>
             <div><b>API</b> —</div>
@@ -1586,8 +1715,18 @@
             <h4>Tạo đặt chỗ (chọn xe, ngày, slot, giá)</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><a class="ref" href="#S-B02">S-B02</a>, <code>ReservationQuote</code> (hàm thuần tính giá), widget
-            <code>SlotRangePicker</code>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế tạo đặt chỗ: chọn xe, chọn ngày, chọn các khung giờ 6 tiếng, xem
+            giá, bấm một nút 'Đặt chỗ và thanh toán'.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-B02">S-B02</a> <strong>Tạo đặt chỗ</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/reservations/new</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-B02">S-B02</a>, <code>ReservationQuote</code> (hàm thuần tính giá), widget
+              <code>SlotRangePicker</code>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-B02">S-B02</a></div>
             <div><b>API</b> <a class="ref ep" href="#E013" title="GET /api/vehicle">E013</a> <a class="ref ep"
@@ -1624,12 +1763,23 @@
             <h4>Cổng thanh toán VNPay bằng WebView (dùng chung 3 nơi)</h4><span class="pill">L1 · hạn T3 06/10
               sáng</span><span class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><code>core/payment/webview_payment_gateway.dart</code> thay <code>FakePaymentGateway</code> (giữ nguyên
-            interface <code>PaymentGateway</code>, thêm hook <code>CallbackReplay</code> nhận đường dẫn và chuỗi query
-            nguyên bản của URL callback), <a class="ref" href="#S-B06">S-B06</a>, kèm bộ poll dùng chung
-            <code>awaitStatus</code> (hàm tổng quát: nhận hàm lấy trạng thái và điều kiện xong, poll 2 giây × 30 giây)
-            để B, C, D cùng dùng. <strong>Không cần ApiClient ở bước này</strong>: hook mặc định là hàm giả, <a
-              class="ref" href="#T-B7">T-B7</a> nối vào <code>ApiClient.replayGet</code>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Làm cái cửa sổ web để trả tiền VNPay nằm ngay trong app, và một hàm 'cứ
+            2 giây hỏi lại một lần xem trả tiền xong chưa'. Cả nhóm dùng chung.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-B06">S-B06</a> <strong>WebView VNPay (dùng chung)</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), <code>staff1@pbm.com</code> (Nhân viên), vào
+                <code>/payment-webview</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><code>core/payment/webview_payment_gateway.dart</code> thay <code>FakePaymentGateway</code> (giữ nguyên
+              interface <code>PaymentGateway</code>, thêm hook <code>CallbackReplay</code> nhận đường dẫn và chuỗi query
+              nguyên bản của URL callback), <a class="ref" href="#S-B06">S-B06</a>, kèm bộ poll dùng chung
+              <code>awaitStatus</code> (hàm tổng quát: nhận hàm lấy trạng thái và điều kiện xong, poll 2 giây × 30 giây)
+              để B, C, D cùng dùng. <strong>Không cần ApiClient ở bước này</strong>: hook mặc định là hàm giả, <a
+                class="ref" href="#T-B7">T-B7</a> nối vào <code>ApiClient.replayGet</code>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-B06">S-B06</a></div>
             <div><b>API</b> <a class="ref ep" href="#E039" title="GET /api/reservations/vnPay-callback">E039</a></div>
@@ -1656,8 +1806,20 @@
             <h4>Danh sách và chi tiết đặt chỗ + QR</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-B01">S-B01</a>, <a class="ref" href="#S-B04">S-B04</a>, widget QR dùng
-            <code>qr_flutter</code> (đã có mẫu ở <code>reservation_detail_screen.dart</code>).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế xem danh sách đặt chỗ của mình và bấm vào xem chi tiết, có mã QR
+            để nhân viên quét.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-B01">S-B01</a> <strong>Danh sách đặt chỗ (tab giữa)</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/reservations</code></li>
+              <li><a class="ref" href="#S-B04">S-B04</a> <strong>Chi tiết đặt chỗ</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/reservations/:id</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-B01">S-B01</a>, <a class="ref" href="#S-B04">S-B04</a>, widget QR dùng
+              <code>qr_flutter</code> (đã có mẫu ở <code>reservation_detail_screen.dart</code>).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-B01">S-B01</a> <a class="ref" href="#S-B04">S-B04</a></div>
             <div><b>API</b> <a class="ref ep" href="#E036" title="GET /api/reservations/my">E036</a> <a class="ref ep"
@@ -1691,8 +1853,18 @@
             <h4>Hủy đặt chỗ chưa thanh toán</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-S">cỡ nhỏ</span>
           </header>
-          <p><a class="ref" href="#S-B05">S-B05</a>, <code>ReservationRepository.cancel()</code> (chỉ đặt chỗ
-            <code>PENDING</code>).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế hủy đặt chỗ nếu chưa trả tiền (miễn phí). Trả tiền rồi thì không
+            có nút hủy.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-B05">S-B05</a> <strong>Hộp xác nhận hủy (chưa thanh toán)</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>(bottom sheet)</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-B05">S-B05</a>, <code>ReservationRepository.cancel()</code> (chỉ đặt chỗ
+              <code>PENDING</code>).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-B05">S-B05</a></div>
             <div><b>API</b> <a class="ref ep" href="#E038"
@@ -1717,8 +1889,24 @@
             <h4>Quản trị: thông tin bãi, loại xe, bảng giá</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-B07">S-B07</a>, <a class="ref" href="#S-B11">S-B11</a>, <a class="ref"
-              href="#S-B12">S-B12</a> (bảng giá cũng được màn Quản lý dùng lại; B xuất widget để C/quản lý nhúng).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Quản trị sửa thông tin bãi, loại xe, bảng giá. Quản lý chỉ sửa được
+            khung giờ và hạn mức.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-B07">S-B07</a> <strong>Thông tin bãi &amp; khung giờ</strong>: đăng nhập
+                <code>admin@pbm.com</code> (Quản trị), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/admin/setup  ·  /manager/manage/parking-config</code></li>
+              <li><a class="ref" href="#S-B11">S-B11</a> <strong>Loại xe</strong>: đăng nhập <code>admin@pbm.com</code>
+                (Quản trị), vào <code>/admin/setup/vehicle-types</code></li>
+              <li><a class="ref" href="#S-B12">S-B12</a> <strong>Bảng giá</strong>: đăng nhập <code>admin@pbm.com</code>
+                (Quản trị), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/admin/pricing  ·  /manager/manage/pricing</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-B07">S-B07</a>, <a class="ref" href="#S-B11">S-B11</a>, <a class="ref"
+                href="#S-B12">S-B12</a> (bảng giá cũng được màn Quản lý dùng lại; B xuất widget để C/quản lý nhúng).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-B07">S-B07</a> <a class="ref" href="#S-B11">S-B11</a> <a class="ref"
                 href="#S-B12">S-B12</a></div>
@@ -1749,9 +1937,25 @@
             <h4>Quản trị: tầng, khu, ưu tiên</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><a class="ref" href="#S-B08">S-B08</a>, <a class="ref" href="#S-B09">S-B09</a>, <a class="ref"
-              href="#S-B10">S-B10</a> (quản lý dùng chung <a class="ref" href="#S-B08">S-B08</a>/<a class="ref"
-              href="#S-B09">S-B09</a> từ tab Bãi xe).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Quản trị và quản lý xem các tầng của bãi, tạo tầng, chia khu cho từng
+            loại xe, bật tầng lên cho dùng.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-B08">S-B08</a> <strong>Danh sách tầng</strong>: đăng nhập
+                <code>admin@pbm.com</code> (Quản trị), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/admin/floors  ·  /manager/floors</code></li>
+              <li><a class="ref" href="#S-B09">S-B09</a> <strong>Chi tiết &amp; cấu hình tầng</strong>: đăng nhập
+                <code>admin@pbm.com</code> (Quản trị), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/admin/floors/:id  ·  /manager/floors/:id</code></li>
+              <li><a class="ref" href="#S-B10">S-B10</a> <strong>Khu (zone)</strong>: đăng nhập
+                <code>admin@pbm.com</code> (Quản trị), vào <code>/admin/setup/zones</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-B08">S-B08</a>, <a class="ref" href="#S-B09">S-B09</a>, <a class="ref"
+                href="#S-B10">S-B10</a> (quản lý dùng chung <a class="ref" href="#S-B08">S-B08</a>/<a class="ref"
+                href="#S-B09">S-B09</a> từ tab Bãi xe).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-B08">S-B08</a> <a class="ref" href="#S-B09">S-B09</a> <a class="ref"
                 href="#S-B10">S-B10</a></div>
@@ -1785,10 +1989,20 @@
             <h4>Nối thanh toán đặt chỗ vào BE + poll xác nhận</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-B03">S-B03</a> với <code>ApiReservationRepository.pay()</code>, nối hook
-            <code>CallbackReplay</code> của <a class="ref" href="#T-B2">T-B2</a> vào <code>ApiClient.replayGet</code>
-            (<a class="ref" href="#T-A1">T-A1</a>), dùng <code>awaitStatus</code> của <a class="ref"
-              href="#T-B2">T-B2</a>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Nối bước trả tiền đặt chỗ vào máy chủ thật: bấm Thanh toán, trả bên
+            VNPay, quay lại app thì hỏi máy chủ xem trả xong chưa.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-B03">S-B03</a> <strong>Xác nhận &amp; thanh toán</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/reservations/:id/pay</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-B03">S-B03</a> với <code>ApiReservationRepository.pay()</code>, nối hook
+              <code>CallbackReplay</code> của <a class="ref" href="#T-B2">T-B2</a> vào <code>ApiClient.replayGet</code>
+              (<a class="ref" href="#T-A1">T-A1</a>), dùng <code>awaitStatus</code> của <a class="ref"
+                href="#T-B2">T-B2</a>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-B03">S-B03</a></div>
             <div><b>API</b> <a class="ref ep" href="#E035"
@@ -1822,10 +2036,17 @@
             <h4>Dọn skeleton quản lý: bỏ Duyệt hoàn tiền</h4><span class="pill">L0 · hạn T2 05/10 sáng</span><span
               class="pill sz-S">cỡ nhỏ</span>
           </header>
-          <p>Xóa <code>features/manager/presentation/refund_review_screen.dart</code>, gỡ phần hoàn tiền khỏi
-            <code>manager_screens.dart</code>, <code>manager_providers.dart</code>, <code>manager_routes.dart</code>.
-            Tab "Cần duyệt" chỉ còn Duyệt xe (huy hiệu số xe chờ duyệt). Cập nhật
-            <code>test/role_navigation_test.dart</code> nếu có kiểm tra liên quan.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Dọn nhà phía quản lý: xóa màn 'Duyệt hoàn tiền' vì không có hoàn tiền.
+          </div>
+          <div class="howtest"><b>Test thế nào</b> Đăng nhập <code>manager1@pbm.com</code>, tab 'Cần duyệt' chỉ còn
+            Duyệt xe; tìm chữ <code>refund</code> trong <code>features/manager</code> ra 0.</div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p>Xóa <code>features/manager/presentation/refund_review_screen.dart</code>, gỡ phần hoàn tiền khỏi
+              <code>manager_screens.dart</code>, <code>manager_providers.dart</code>, <code>manager_routes.dart</code>.
+              Tab "Cần duyệt" chỉ còn Duyệt xe (huy hiệu số xe chờ duyệt). Cập nhật
+              <code>test/role_navigation_test.dart</code> nếu có kiểm tra liên quan.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> —</div>
             <div><b>API</b> —</div>
@@ -1843,8 +2064,20 @@
             <h4>Danh sách gói + chọn xe + xác minh</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-C01">S-C01</a>, <a class="ref" href="#S-C02">S-C02</a>,
-            <code>MembershipRepository.getAvailablePlans(vehicleId)</code>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế xem các gói thành viên (gói theo tháng), chọn xe để xem gói nào
+            mua được.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-C01">S-C01</a> <strong>Gói thành viên (tab)</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/membership</code></li>
+              <li><a class="ref" href="#S-C02">S-C02</a> <strong>Chọn gói theo xe</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/membership (tab Các gói)</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-C01">S-C01</a>, <a class="ref" href="#S-C02">S-C02</a>,
+              <code>MembershipRepository.getAvailablePlans(vehicleId)</code>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-C01">S-C01</a> <a class="ref" href="#S-C02">S-C02</a></div>
             <div><b>API</b> <a class="ref ep" href="#E013" title="GET /api/vehicle">E013</a> <a class="ref ep"
@@ -1867,8 +2100,18 @@
             <h4>Mua gói + thanh toán + poll kích hoạt</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><a class="ref" href="#S-C03">S-C03</a>; poller <code>awaitSubscriptionStatus(id)</code> dùng chung với nâng
-            cấp/gia hạn.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế mua gói thành viên và trả tiền VNPay, rồi chờ máy chủ báo gói đã
+            bật.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-C03">S-C03</a> <strong>Xem trước &amp; mua</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/membership/buy</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-C03">S-C03</a>; poller <code>awaitSubscriptionStatus(id)</code> dùng chung với
+              nâng cấp/gia hạn.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-C03">S-C03</a></div>
             <div><b>API</b> <a class="ref ep" href="#E045"
@@ -1901,7 +2144,17 @@
             <h4>Chi tiết gói + QR + gia hạn</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-C04">S-C04</a>, hộp xác nhận Gia hạn.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế xem chi tiết gói đã mua, có mã QR, và bấm Gia hạn khi gói sắp
+            hết.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-C04">S-C04</a> <strong>Chi tiết gói</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/membership/:id</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-C04">S-C04</a>, hộp xác nhận Gia hạn.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-C04">S-C04</a></div>
             <div><b>API</b> <a class="ref ep" href="#E049"
@@ -1933,7 +2186,17 @@
             <h4>Nâng cấp lên FULL_TIME</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span class="pill sz-L">cỡ
               lớn</span>
           </header>
-          <p><a class="ref" href="#S-C05">S-C05</a>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Tài xế đổi gói đang dùng sang gói cả ngày (FULL_TIME), app hiện số tiền
+            được trừ và số tiền phải trả thêm.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-C05">S-C05</a> <strong>Nâng cấp lên cả ngày</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/membership/upgrade</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-C05">S-C05</a>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-C05">S-C05</a></div>
             <div><b>API</b> <a class="ref ep" href="#E052"
@@ -1962,14 +2225,28 @@
             <h4>Quản lý: tổng quan và giám sát</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-C06">S-C06</a>, <a class="ref" href="#S-C11">S-C11</a> (3 tab chỉ đọc), <a
-              class="ref" href="#S-C12">S-C12</a> (quản trị: người dùng). <strong><a class="ref" href="#S-C12">S-C12</a>
-              đặt trong <code>features/manager/presentation/</code>, không đặt trong
-              <code>features/admin</code></strong> (thư mục của B) để hai người không cùng sửa
-            <code>admin_screens.dart</code>. Bảng giá nhúng từ widget của <a class="ref" href="#T-B5">T-B5</a> (cùng
-            lượt 2: ghép khi B5 merge); tab Bãi xe gắn tạm màn giữ chỗ, đổi sang <a class="ref"
-              href="#S-B08">S-B08</a>/<a class="ref" href="#S-B09">S-B09</a> khi <a class="ref" href="#T-B6">T-B6</a>
-            xong.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Quản lý xem tổng quan bãi (bao nhiêu xe, đầy chưa) và xem danh sách đặt
+            chỗ, phiên gửi xe, giao dịch. Quản trị xem danh sách tài xế.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-C06">S-C06</a> <strong>Tổng quan</strong>: đăng nhập
+                <code>manager1@pbm.com</code> (Quản lý), vào <code>/manager/overview</code></li>
+              <li><a class="ref" href="#S-C11">S-C11</a> <strong>Giám sát</strong>: đăng nhập
+                <code>manager1@pbm.com</code> (Quản lý), vào <code>/manager/manage/monitor</code></li>
+              <li><a class="ref" href="#S-C12">S-C12</a> <strong>Người dùng</strong>: đăng nhập
+                <code>admin@pbm.com</code> (Quản trị), vào <code>/admin/users</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-C06">S-C06</a>, <a class="ref" href="#S-C11">S-C11</a> (3 tab chỉ đọc), <a
+                class="ref" href="#S-C12">S-C12</a> (quản trị: người dùng). <strong><a class="ref"
+                  href="#S-C12">S-C12</a> đặt trong <code>features/manager/presentation/</code>, không đặt trong
+                <code>features/admin</code></strong> (thư mục của B) để hai người không cùng sửa
+              <code>admin_screens.dart</code>. Bảng giá nhúng từ widget của <a class="ref" href="#T-B5">T-B5</a> (cùng
+              lượt 2: ghép khi B5 merge); tab Bãi xe gắn tạm màn giữ chỗ, đổi sang <a class="ref"
+                href="#S-B08">S-B08</a>/<a class="ref" href="#S-B09">S-B09</a> khi <a class="ref" href="#T-B6">T-B6</a>
+              xong.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-C06">S-C06</a> <a class="ref" href="#S-C11">S-C11</a> <a class="ref"
                 href="#S-C12">S-C12</a></div>
@@ -1998,8 +2275,18 @@
             <h4>Quản lý: duyệt xe</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span class="pill sz-M">cỡ
               vừa</span>
           </header>
-          <p><a class="ref" href="#S-C07">S-C07</a>; huy hiệu số lượng chờ duyệt trên tab Duyệt xe (đã có mẫu
-            <code>ManagerVerifyScreen</code>).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Quản lý xem giấy tờ xe tài xế gửi lên rồi bấm Duyệt hoặc Từ chối (từ
+            chối phải ghi lý do).</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-C07">S-C07</a> <strong>Duyệt xe</strong>: đăng nhập
+                <code>manager1@pbm.com</code> (Quản lý), vào <code>/manager/verify</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-C07">S-C07</a>; huy hiệu số lượng chờ duyệt trên tab Duyệt xe (đã có mẫu
+              <code>ManagerVerifyScreen</code>).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-C07">S-C07</a></div>
             <div><b>API</b> <a class="ref ep" href="#E020" title="GET /api/vehicle-verification/pending">E020</a> <a
@@ -2024,8 +2311,22 @@
             <h4>Quản lý: gói, khung giờ gói, người đăng ký</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><a class="ref" href="#S-C08">S-C08</a>, <a class="ref" href="#S-C09">S-C09</a>, <a class="ref"
-              href="#S-C10">S-C10</a>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Quản lý tạo và sửa các gói thành viên, các khung giờ của gói, và xem ai
+            đã đăng ký.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-C08">S-C08</a> <strong>Quản lý gói</strong>: đăng nhập
+                <code>manager1@pbm.com</code> (Quản lý), vào <code>/manager/manage/plans</code></li>
+              <li><a class="ref" href="#S-C09">S-C09</a> <strong>Khung giờ của gói</strong>: đăng nhập
+                <code>manager1@pbm.com</code> (Quản lý), vào <code>/manager/manage/time-slots</code></li>
+              <li><a class="ref" href="#S-C10">S-C10</a> <strong>Người đăng ký gói</strong>: đăng nhập
+                <code>manager1@pbm.com</code> (Quản lý), vào <code>/manager/manage/subscribers</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-C08">S-C08</a>, <a class="ref" href="#S-C09">S-C09</a>, <a class="ref"
+                href="#S-C10">S-C10</a>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-C08">S-C08</a> <a class="ref" href="#S-C09">S-C09</a> <a class="ref"
                 href="#S-C10">S-C10</a></div>
@@ -2061,11 +2362,19 @@
             <h4>Dọn skeleton: bỏ tiền mặt đặt chỗ và thông báo hoàn tiền</h4><span class="pill">L0 · hạn T2 05/10
               sáng</span><span class="pill sz-S">cỡ nhỏ</span>
           </header>
-          <p><code>features/staff</code> (<code>gate_repository.dart</code>, <code>scan_result_screen.dart</code>): bỏ
-            nhánh thu tiền mặt cho đặt chỗ <code>PENDING</code>, thay bằng thẻ "Chưa thanh toán" kèm nút sang check-in
-            vãng lai; <code>features/notification</code> (<code>app_notification.dart</code>,
-            <code>notification_screen.dart</code>): bỏ các loại thông báo hoàn tiền (phần <code>features/wallet</code>
-            do <a class="ref" href="#T-A7">T-A7</a> gỡ).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Dọn nhà phía nhân viên: bỏ chuyện thu tiền mặt cho đặt chỗ chưa trả.
+            Khách chưa trả mà tới cổng thì cho check-in vãng lai.</div>
+          <div class="howtest"><b>Test thế nào</b> Đăng nhập <code>staff1@pbm.com</code>, quét đặt chỗ
+            <code>PENDING</code> phải hiện 'Chưa thanh toán' và nút sang check-in vãng lai; tìm <code>collectCash</code>
+            ra 0.</div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><code>features/staff</code> (<code>gate_repository.dart</code>, <code>scan_result_screen.dart</code>): bỏ
+              nhánh thu tiền mặt cho đặt chỗ <code>PENDING</code>, thay bằng thẻ "Chưa thanh toán" kèm nút sang check-in
+              vãng lai; <code>features/notification</code> (<code>app_notification.dart</code>,
+              <code>notification_screen.dart</code>): bỏ các loại thông báo hoàn tiền (phần <code>features/wallet</code>
+              do <a class="ref" href="#T-A7">T-A7</a> gỡ).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> —</div>
             <div><b>API</b> —</div>
@@ -2084,9 +2393,23 @@
             <h4>Quét mã + check-in đặt chỗ/gói</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><a class="ref" href="#S-D08">S-D08</a> (đã chạy camera thật + nhập tay), <a class="ref"
-              href="#S-D09">S-D09</a> (kết quả quét, ô xác nhận biển số, nút Check-in), nối <code>GateRepository</code>
-            thật.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Nhân viên quét mã QR của khách (hoặc gõ tay mã) rồi bấm Check-in cho xe
+            vào bãi.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-D08">S-D08</a> <strong>Quét mã (nút giữa)</strong>: đăng nhập
+                <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý), vào <code>/scan</code>
+              </li>
+              <li><a class="ref" href="#S-D09">S-D09</a> <strong>Kết quả quét &amp; Check-in</strong>: đăng nhập
+                <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/scan/result?code=</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-D08">S-D08</a> (đã chạy camera thật + nhập tay), <a class="ref"
+                href="#S-D09">S-D09</a> (kết quả quét, ô xác nhận biển số, nút Check-in), nối
+              <code>GateRepository</code> thật.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-D08">S-D08</a> <a class="ref" href="#S-D09">S-D09</a></div>
             <div><b>API</b> <a class="ref ep" href="#E041" title="GET /api/reservations/code/{reservationCode}">E041</a>
@@ -2120,8 +2443,22 @@
             <h4>Check-in xe vãng lai + xác nhận lên tầng</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-D10">S-D10</a>, <a class="ref" href="#S-D11">S-D11</a>, widget chọn tầng dùng
-            <code>GET /floors</code>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Xe không đặt trước mà chạy tới cổng: nhân viên check-in vãng lai, rồi
+            xác nhận xe đã lên đúng tầng.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-D10">S-D10</a> <strong>Check-in xe vãng lai</strong>: đăng nhập
+                <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/staff/home/walk-in</code></li>
+              <li><a class="ref" href="#S-D11">S-D11</a> <strong>Xác nhận lên tầng</strong>: đăng nhập
+                <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/staff/sessions/:ticket/floor</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-D10">S-D10</a>, <a class="ref" href="#S-D11">S-D11</a>, widget chọn tầng dùng
+              <code>GET /floors</code>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-D10">S-D10</a> <a class="ref" href="#S-D11">S-D11</a></div>
             <div><b>API</b> <a class="ref ep" href="#E077" title="POST /api/parking/check-in">E077</a> <a class="ref ep"
@@ -2151,8 +2488,22 @@
             <h4>Check-out, phạt sai khu, danh sách xe đang gửi</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span
               class="pill sz-L">cỡ lớn</span>
           </header>
-          <p><a class="ref" href="#S-D12">S-D12</a>, <a class="ref" href="#S-D13">S-D13</a>; dùng
-            <code>PaymentGateway</code> của B cho VNPay.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Xe ra: nhân viên xem tiền phải trả, thu tiền mặt hoặc cho khách trả
+            VNPay, rồi cho xe ra. Có danh sách xe đang gửi.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-D12">S-D12</a> <strong>Check-out</strong>: đăng nhập
+                <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/staff/sessions/:ticket/checkout</code></li>
+              <li><a class="ref" href="#S-D13">S-D13</a> <strong>Xe đang gửi</strong>: đăng nhập
+                <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/staff/sessions</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-D12">S-D12</a>, <a class="ref" href="#S-D13">S-D13</a>; dùng
+              <code>PaymentGateway</code> của B cho VNPay.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-D12">S-D12</a> <a class="ref" href="#S-D13">S-D13</a></div>
             <div><b>API</b> <a class="ref ep" href="#E081" title="GET /api/parking/check-out/preview">E081</a> <a
@@ -2193,7 +2544,20 @@
             <h4>Trang chủ nhân viên + tra cứu đặt chỗ</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-S">cỡ nhỏ</span>
           </header>
-          <p><a class="ref" href="#S-D07">S-D07</a>, <a class="ref" href="#S-D14">S-D14</a>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Trang chủ của nhân viên (số xe đang gửi, số xe mình đã cho vào hôm nay)
+            và màn tra cứu đặt chỗ.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-D07">S-D07</a> <strong>Trang chủ nhân viên (tab)</strong>: đăng nhập
+                <code>staff1@pbm.com</code> (Nhân viên), vào <code>/staff/home</code></li>
+              <li><a class="ref" href="#S-D14">S-D14</a> <strong>Tra cứu đặt chỗ</strong>: đăng nhập
+                <code>staff1@pbm.com</code> (Nhân viên), <code>manager1@pbm.com</code> (Quản lý), vào
+                <code>/staff/reservations</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-D07">S-D07</a>, <a class="ref" href="#S-D14">S-D14</a>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-D07">S-D07</a> <a class="ref" href="#S-D14">S-D14</a></div>
             <div><b>API</b> <a class="ref ep" href="#E085" title="GET /api/parking-sessions/current">E085</a> <a
@@ -2217,8 +2581,22 @@
             <h4>Trang chủ tài xế + Bảng giá + Thẻ gửi xe</h4><span class="pill">L1 · hạn T3 06/10 sáng</span><span
               class="pill sz-M">cỡ vừa</span>
           </header>
-          <p><a class="ref" href="#S-D01">S-D01</a>, <a class="ref" href="#S-D05">S-D05</a>, <a class="ref"
-              href="#S-D06">S-D06</a>.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Trang chủ của tài xế (xe đang gửi, đặt chỗ sắp tới, gói đang dùng), xem
+            bảng giá, xem thẻ gửi xe.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-D01">S-D01</a> <strong>Trang chủ tài xế (tab)</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/home</code></li>
+              <li><a class="ref" href="#S-D05">S-D05</a> <strong>Bảng giá &amp; Chính sách</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/home/pricing</code></li>
+              <li><a class="ref" href="#S-D06">S-D06</a> <strong>Thẻ gửi xe</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/home/ticket/:sessionId</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-D01">S-D01</a>, <a class="ref" href="#S-D05">S-D05</a>, <a class="ref"
+                href="#S-D06">S-D06</a>.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-D01">S-D01</a> <a class="ref" href="#S-D05">S-D05</a> <a class="ref"
                 href="#S-D06">S-D06</a></div>
@@ -2248,8 +2626,18 @@
             <h4>Thông báo + SSE</h4><span class="pill">L2 · hạn T4 07/10 sáng</span><span class="pill sz-L">cỡ
               lớn</span>
           </header>
-          <p><a class="ref" href="#S-D02">S-D02</a>, <code>NotificationRepository</code>, <code>SseClient</code> tự nối
-            lại.</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Chuông thông báo: máy chủ có tin mới thì hiện ngay trên app, bấm vào thì
+            mở đúng màn liên quan.</div>
+          <div class="howtest"><b>Test bằng tài khoản nào, vào đâu</b> (mật khẩu <code>123123</code>)<ul>
+              <li><a class="ref" href="#S-D02">S-D02</a> <strong>Thông báo</strong>: đăng nhập
+                <code>driver1@pbm.com</code> (Tài xế), vào <code>/driver/home/notifications</code></li>
+            </ul>
+          </div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p><a class="ref" href="#S-D02">S-D02</a>, <code>NotificationRepository</code>, <code>SseClient</code> tự
+              nối lại.</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> <a class="ref" href="#S-D02">S-D02</a></div>
             <div><b>API</b> <a class="ref ep" href="#E072" title="GET /api/notifications">E072</a> <a class="ref ep"
@@ -2274,8 +2662,15 @@
             <h4>QA tích hợp + sổ lệch BE</h4><span class="pill">L3 · hạn T4 07/10 chiều</span><span class="pill sz-M">cỡ
               vừa</span>
           </header>
-          <p>Chạy bộ test ở mục Kiểm thử trên điện thoại thật; duy trì danh sách G-xx (giới hạn BE) và cập nhật tài liệu
-            này (<code>python docs/spec/build.py</code>).</p>
+          <div class="easy"><b>Nói dễ hiểu:</b> Cả nhóm xong, Ánh đóng vai khách thật chạy một mạch: tài xế đặt chỗ →
+            nhân viên cho vào → cho ra, ghi lại chỗ nào hỏng.</div>
+          <div class="howtest"><b>Test thế nào</b> Dùng 2 điện thoại: một máy đăng nhập <code>driver1@pbm.com</code>,
+            một máy <code>staff1@pbm.com</code>. Làm theo <a class="ref" href="#TC-X10">TC-X10</a>.</div>
+          <details class="tech">
+            <summary>Chi tiết kỹ thuật</summary>
+            <p>Chạy bộ test ở mục Kiểm thử trên điện thoại thật; duy trì danh sách G-xx (giới hạn BE) và cập nhật tài
+              liệu này (<code>python docs/spec/build.py</code>).</p>
+          </details>
           <div class="meta">
             <div><b>Màn</b> —</div>
             <div><b>API</b> —</div>
